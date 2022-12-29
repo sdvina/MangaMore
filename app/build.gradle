@@ -39,7 +39,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.1.1'
+        kotlinCompilerExtensionVersion compose_version
     }
     packagingOptions {
         resources {
@@ -50,13 +50,28 @@ android {
 
 dependencies {
 
+    def coroutines_version = "1.6.4"
+
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.6.1'
     implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.ui:ui-util:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.compose.material3:material3:1.1.0-alpha03'
+    implementation "androidx.compose.material:material-icons-extended:1.3.1"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha05"
     implementation 'androidx.documentfile:documentfile:1.0.1'
+    implementation 'androidx.palette:palette-ktx:1.0.0'
+
+    def accompanist_version = "0.27.0"
+    // accompanist
+    implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-webview:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
+
 
     def room_version = "2.5.0-rc01"
     def paging_version = "3.2.0-alpha03"
@@ -71,6 +86,9 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     testImplementation "androidx.paging:paging-common-ktx:$paging_version"
     implementation "androidx.paging:paging-compose:$paging_compose_version"
+
+    // load image
+    implementation "io.coil-kt:coil-compose:2.2.1"
 
     // K-V
     implementation 'com.tencent:mmkv-static:1.2.13'

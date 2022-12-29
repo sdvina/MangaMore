@@ -19,7 +19,7 @@ object AppDatabaseHelper {
     fun onCreate(context: Context) {
         db = Room.databaseBuilder(context, AppDatabase::class.java, DatabaseConstant.DB_NAME)
             .enableMultiInstanceInvalidation() // 支持多进程运行
-            .fallbackToDestructiveMigration() // 回退迁移
+            //.fallbackToDestructiveMigration() // 回退迁移
             .build()
     }
 }

@@ -386,7 +386,7 @@ object ArchiveFileReader {
         }
 
         private fun extractRarFile(childName: String, header: FileHeader, archive: Archive?) {
-            val outPath: String = "fileDir" + childName
+            val outPath: String = "fileDir$childName"
             try {
                 FileOutputStream(outPath).use { ot -> archive!!.extractFile(header, ot) }
             } catch (e: IOException) {
