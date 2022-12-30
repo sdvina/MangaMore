@@ -20,6 +20,9 @@ import org.sdvina.mangamore.ui.comic.SliderView
 import org.sdvina.mangamore.ui.home.ComicTopScreen
 import org.sdvina.mangamore.ui.home.ComicTopType
 import org.sdvina.mangamore.ui.home.HomeViewModel
+import org.sdvina.mangamore.ui.library.ComicListScreen
+import org.sdvina.mangamore.ui.library.FolderListScreen
+import org.sdvina.mangamore.ui.library.LibraryViewModel
 
 object AppDestinations {
     const val HOME_ROUTE = "home"
@@ -27,6 +30,7 @@ object AppDestinations {
     const val SETTINGS_ROUTE = "settings"
     const val ABOUT_ROUTE = "about"
     const val COMIC_VIEWER_ROUTE = "comicViewer"
+    const val COMIC_LIST_ROUTE = "comicList"
 }
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
@@ -67,17 +71,31 @@ fun AppNavGraph (
                     appNavigation = appNavigation
                 )
             }
-/*            composable(AppDestinations.LIBRARY_ROUTE) {
+            composable(AppDestinations.LIBRARY_ROUTE) {
                 val libraryViewModel: LibraryViewModel = viewModel(
-                    factory = LibraryViewModel.provideFactory(appContainer)
+                    factory = LibraryViewModel.provideFactory(appContainer.libraryRepository)
                 )
-                LibraryScreen(
-                    navController = navController,
-                    viewModel = LibraryViewModel
+                FolderListScreen(
+                    appNavigation = appNavigation,
+                    openDrawer = openDrawer,
+                    folderItemsFlow = libraryViewModel.getFolderItemsFlow() ,
+                    onFolderItemSelected = { libraryViewModel.selectFolderItem(it) },
+                    addFolder = { libraryViewModel.addFolder(it) }
                 )
-            }*/
+            }
+            composable(AppDestinations.COMIC_LIST_ROUTE){
+                val libraryViewModel: LibraryViewModel = viewModel(
+                    factory = LibraryViewModel.provideFactory(appContainer.libraryRepository)
+                )
+                ComicListScreen(
+                    appNavigation = appNavigation,
+                    viewModelState = libraryViewModel.state,
+                    comicItemsFlow = libraryViewModel.searchComicItemsFlow(),
+                    onToggleFavorite = {}
+                )
+            }
             composable(
-                route = AppDestinations.COMIC_VIEWER_ROUTE +"/{comicId}",
+                route = AppDestinations.COMIC_VIEWER_ROUTE + "/{comicId}",
                 arguments = listOf(navArgument("comicId"){
                     type = NavType.LongType
                 })

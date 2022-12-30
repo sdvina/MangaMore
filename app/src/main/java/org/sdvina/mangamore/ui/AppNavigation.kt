@@ -22,6 +22,12 @@ class AppNavigation (navController: NavHostController) {
             restoreState = true
         }
     }
+    val navigationToComicList: () -> Unit = {
+        navController.navigate(AppDestinations.COMIC_LIST_ROUTE) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
     val navigationToComicViewer: (Long) -> Unit = { comicId ->
         navController.navigate(AppDestinations.COMIC_VIEWER_ROUTE + "/$comicId"){
             launchSingleTop = true
@@ -29,7 +35,6 @@ class AppNavigation (navController: NavHostController) {
     }
     val navigationToBack: () -> Unit = {
         navController.navigateUp()
-        navController.popBackStack()
     }
     val navigateToSettings: () -> Unit = {
         navController.navigate(AppDestinations.SETTINGS_ROUTE) {
