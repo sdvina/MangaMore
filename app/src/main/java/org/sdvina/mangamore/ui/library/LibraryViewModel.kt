@@ -59,7 +59,7 @@ class LibraryViewModel(
         return Pager(pagingConfig) {
             libraryRepository.getComicItemsPagingSource(AppPreferences.currentAccountId)
         }.flow.map { pagingData ->
-            pagingData.filter { comicItem -> comicItem.folderId == _folderId }
+            pagingData.filter { it.folderId == _folderId }
         }.cachedIn(viewModelScope)
     }
 
@@ -71,9 +71,7 @@ class LibraryViewModel(
 
     fun selectFolderItem(folderItem: FolderItem) {
         _folderId = folderItem.folderId
-        _state.update { currentState ->
-            currentState.copy(folderItem = folderItem)
-        }
+        _folderItem.value = folderItem
     }
 
     companion object {

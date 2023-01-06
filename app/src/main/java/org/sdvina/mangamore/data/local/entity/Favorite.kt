@@ -11,6 +11,6 @@ data class Favorite(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "favorite_id") val favoriteId: Long,
     @ColumnInfo(name = "account_id") val accountId: Long,
-    @ColumnInfo(name = "comic_id") val comicId: Long,
+    @ColumnInfo(name = "comic_id", index = true) val comicId: Long,
     @ColumnInfo(name = "create_date") val createDate: Date
     )

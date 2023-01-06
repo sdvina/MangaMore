@@ -1,6 +1,5 @@
 package org.sdvina.mangamore.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -25,12 +24,12 @@ import org.sdvina.mangamore.ui.library.FolderListScreen
 import org.sdvina.mangamore.ui.library.LibraryViewModel
 
 object AppDestinations {
-    const val HOME_ROUTE = "home"
-    const val LIBRARY_ROUTE = "library"
-    const val SETTINGS_ROUTE = "settings"
-    const val ABOUT_ROUTE = "about"
-    const val COMIC_VIEWER_ROUTE = "comicViewer"
-    const val COMIC_LIST_ROUTE = "comicList"
+    const val HOME = "home"
+    const val LIBRARY = "library"
+    const val SETTINGS = "settings"
+    const val ABOUT = "about"
+    const val COMIC_VIEWER = "comicViewer"
+    const val COMIC_LIST = "comicList"
 }
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
@@ -40,82 +39,82 @@ fun AppNavGraph (
     openDrawer: ()  -> Unit,
     appNavigation: AppNavigation,
     appContainer: AppContainer
-    ) {
-        AnimatedNavHost(
-            navController = navController,
-            startDestination = AppDestinations.HOME_ROUTE,
-            modifier = Modifier,
-            enterTransition = {
-                fadeIn(animationSpec = tween(750))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(750))
-            },
-            popEnterTransition = {
-                fadeIn(animationSpec = tween(750))
-            },
-            popExitTransition = {
-                fadeOut(animationSpec = tween(750))
-            }
+) {
+    AnimatedNavHost(
+        navController = navController,
+        startDestination = AppDestinations.HOME,
+        modifier = Modifier,
+        enterTransition = {
+            fadeIn(animationSpec = tween(750))
+        },
+        exitTransition = {
+            fadeOut(animationSpec = tween(750))
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(750))
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(750))
+        }
+    ){
+        composable(AppDestinations.HOME) {
+            val homeViewModel: HomeViewModel = viewModel(
+                factory = HomeViewModel.provideFactory(appContainer.libraryRepository)
+            )
+            ComicTopScreen(
+                appNavigation = appNavigation,
+                openDrawer = openDrawer,
+                readingComicItemsFlow = homeViewModel.getComicItemsFlow(ComicTopType.READING),
+                unreadComicItemsFlow = homeViewModel.getComicItemsFlow(ComicTopType.UNREAD),
+                readComicItemsFlow = homeViewModel.getComicItemsFlow(ComicTopType.READ),
+                favoritedComicItemsFlow = homeViewModel.getComicItemsFlow(ComicTopType.FAVORITED)
+            )
+        }
+        composable(AppDestinations.LIBRARY) {
+            val libraryViewModel: LibraryViewModel = viewModel(
+                factory = LibraryViewModel.provideFactory(appContainer.libraryRepository)
+            )
+            FolderListScreen(
+                appNavigation = appNavigation,
+                openDrawer = openDrawer,
+                folderItemsFlow = libraryViewModel.getFolderItemsFlow() ,
+                onFolderItemSelected = { libraryViewModel.selectFolderItem(it) },
+                addFolder = { libraryViewModel.addFolder(it) }
+            )
+        }
+        composable(AppDestinations.COMIC_LIST){
+            val libraryViewModel: LibraryViewModel = viewModel(
+                factory = LibraryViewModel.provideFactory(appContainer.libraryRepository)
+            )
+            ComicListScreen(
+                appNavigation = appNavigation,
+                viewModelState = libraryViewModel.state,
+                comicItemsFlow = libraryViewModel.searchComicItemsFlow(),
+                onToggleFavorite = {}
+            )
+        }
+        composable(
+            route = AppDestinations.COMIC_VIEWER + "/{comicId}",
+            arguments = listOf(navArgument("comicId"){
+                type = NavType.LongType
+            })
         ){
-            composable(AppDestinations.HOME_ROUTE) {
-                val homeViewModel: HomeViewModel = viewModel(
-                    factory = HomeViewModel.provideFactory(appContainer.libraryRepository)
-                )
-                ComicTopScreen(
-                    openDrawer = openDrawer,
-                    readingComicItemsFlow = homeViewModel.getComicItemsFlow(ComicTopType.READING),
-                    unreadComicItemsFlow = homeViewModel.getComicItemsFlow(ComicTopType.UNREAD),
-                    readComicItemsFlow = homeViewModel.getComicItemsFlow(ComicTopType.READ),
-                    favoritedComicItemsFlow = homeViewModel.getComicItemsFlow(ComicTopType.FAVORITED),
-                    appNavigation = appNavigation
-                )
-            }
-            composable(AppDestinations.LIBRARY_ROUTE) {
-                val libraryViewModel: LibraryViewModel = viewModel(
-                    factory = LibraryViewModel.provideFactory(appContainer.libraryRepository)
-                )
-                FolderListScreen(
-                    appNavigation = appNavigation,
-                    openDrawer = openDrawer,
-                    folderItemsFlow = libraryViewModel.getFolderItemsFlow() ,
-                    onFolderItemSelected = { libraryViewModel.selectFolderItem(it) },
-                    addFolder = { libraryViewModel.addFolder(it) }
-                )
-            }
-            composable(AppDestinations.COMIC_LIST_ROUTE){
-                val libraryViewModel: LibraryViewModel = viewModel(
-                    factory = LibraryViewModel.provideFactory(appContainer.libraryRepository)
-                )
-                ComicListScreen(
-                    appNavigation = appNavigation,
-                    viewModelState = libraryViewModel.state,
-                    comicItemsFlow = libraryViewModel.searchComicItemsFlow(),
-                    onToggleFavorite = {}
-                )
-            }
-            composable(
-                route = AppDestinations.COMIC_VIEWER_ROUTE + "/{comicId}",
-                arguments = listOf(navArgument("comicId"){
-                    type = NavType.LongType
-                })
-            ){
-                val comicId = it.arguments?.getLong("comicId")
-                val comicViewModel: ComicViewModel = viewModel(
-                    factory = ComicViewModel.provideFactory(appContainer.comicRepository)
-                )
-                SliderView(
-                    appNavigation = appNavigation,
-                    getComicItem =  { comicViewModel.getComicItem(comicId!!)},
-                    comicItemDetail = comicViewModel.getComicItemDetail(comicId!!),
-                    getComicPageItemData =  {comicPageItem -> comicViewModel.getComicPageData(comicPageItem)},
-                )
-            }
-            composable(AppDestinations.SETTINGS_ROUTE) {
-                // TODO
-            }
-            composable(AppDestinations.ABOUT_ROUTE) {
-                // TODO
-            }
+            val comicId = it.arguments?.getLong("comicId")
+            val comicViewModel: ComicViewModel = viewModel(
+                factory = ComicViewModel.provideFactory(appContainer.comicRepository)
+            )
+            SliderView(
+                appNavigation = appNavigation,
+                getComicItem =  { comicViewModel.getComicItem(comicId!!)},
+                comicItemDetail = comicViewModel.getComicItemDetail(comicId!!),
+                getComicPageItemData =  {comicPageItem -> comicViewModel.getComicPageData(comicPageItem)},
+            )
+        }
+        composable(AppDestinations.SETTINGS) {
+            // TODO
+        }
+        composable(AppDestinations.ABOUT) {
+            // TODO
         }
     }
+}

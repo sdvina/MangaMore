@@ -35,77 +35,80 @@ import org.sdvina.mangamore.ui.components.verticalgrid.VerticalGrid
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComicTopScreen(
+    appNavigation: AppNavigation,
     openDrawer: () -> Unit,
     readingComicItemsFlow: Flow<PagingData<ComicItem>>,
     unreadComicItemsFlow: Flow<PagingData<ComicItem>>,
     readComicItemsFlow: Flow<PagingData<ComicItem>>,
     favoritedComicItemsFlow: Flow<PagingData<ComicItem>>,
-    appNavigation: AppNavigation,
     modifier: Modifier = Modifier
 ) {
-    val readingComicItems = readingComicItemsFlow.collectAsLazyPagingItems()
-    val unreadComicItems = unreadComicItemsFlow.collectAsLazyPagingItems()
-    val readComicItems = readComicItemsFlow.collectAsLazyPagingItems()
-    val favoritedComicItems = favoritedComicItemsFlow.collectAsLazyPagingItems()
     Scaffold(
         topBar = {
-            HomeTopAppBar(
-                openDrawer = openDrawer
-            )
+            HomeTopAppBar(openDrawer = openDrawer)
         },
         modifier = modifier.statusBarsPadding()
     ) { innerPadding ->
-        val contentModifier = Modifier.padding(innerPadding)
+        val readingComicItems = readingComicItemsFlow.collectAsLazyPagingItems()
+        val unreadComicItems = unreadComicItemsFlow.collectAsLazyPagingItems()
+        val readComicItems = readComicItemsFlow.collectAsLazyPagingItems()
+        val favoritedComicItems = favoritedComicItemsFlow.collectAsLazyPagingItems()
         val scrollState = rememberScrollState(0)
-        Box(modifier = contentModifier.fillMaxSize()){
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ){
             Column(modifier = modifier
                 .padding(8.dp)
                 .verticalScroll(state = scrollState)) {
-                if(unreadComicItems.itemCount>0){
-                    ComicGridSection(unreadComicItems.itemSnapshotList.items, appNavigation)
+                if(readingComicItems.itemCount > 0){
+                    ComicGridSection(appNavigation, unreadComicItems.itemSnapshotList.items)
                     ComicItemsTitle(
                         title = stringResource(R.string.reading),
-                        itemCount = readingComicItems.itemCount.toString(),
-                        modifier = Modifier
+                        itemCount = readingComicItems.itemCount.toString()
                     )
-                    ComicLane(readingComicItems, appNavigation)
+                    ComicLane(appNavigation, readingComicItems)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
-                if(unreadComicItems.itemCount>0){
+                if(unreadComicItems.itemCount > 0){
                     ComicItemsTitle(
                         title = stringResource(R.string.unread),
-                        itemCount = readingComicItems.itemCount.toString(),
-                        modifier = Modifier
+                        itemCount = readingComicItems.itemCount.toString()
                     )
-                    ComicLane(unreadComicItems, appNavigation)
+                    ComicLane(appNavigation, unreadComicItems)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-                if(favoritedComicItems.itemCount>0){
+                if(favoritedComicItems.itemCount > 0){
                     ComicItemsTitle(
                         title = stringResource(R.string.favorited),
-                        itemCount = favoritedComicItems.itemCount.toString(),
-                        modifier = Modifier
+                        itemCount = favoritedComicItems.itemCount.toString()
                     )
-                    ComicLane(favoritedComicItems, appNavigation)
+                    ComicLane(appNavigation, favoritedComicItems)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-                if(readComicItems.itemCount>0){
+                if(readComicItems.itemCount > 0){
                     ComicItemsTitle(
                         title = stringResource(R.string.read),
-                        itemCount = readComicItems.itemCount.toString(),
-                        modifier = Modifier
+                        itemCount = readComicItems.itemCount.toString()
                     )
-                    ComicLane(readComicItems, appNavigation)
+                    ComicLane(appNavigation, readComicItems)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
+
+
         }
     }
 }
 
 @Composable
-fun ComicItemsTitle(title: String, itemCount: String,  modifier: Modifier = Modifier) {
+fun ComicItemsTitle(
+    title: String,
+    itemCount: String,
+    modifier: Modifier = Modifier
+) {
     Row {
         Text(
             text = title,
@@ -126,7 +129,10 @@ fun ComicItemsTitle(title: String, itemCount: String,  modifier: Modifier = Modi
 }
 
 @Composable
-fun ComicGridSection(items: List<ComicItem>, appNavigation: AppNavigation) {
+fun ComicGridSection(
+    appNavigation: AppNavigation,
+    items: List<ComicItem>
+) {
     ComicItemsTitle(
         title = stringResource(R.string.top_reading),
         itemCount = (if(items.size<6) items.size else 6).toString(),
@@ -188,10 +194,19 @@ private fun Modifier.notifyInput(block: () -> Unit): Modifier =
     }
 
 @Composable
-fun ComicLane(pagingComicItems: LazyPagingItems<ComicItem>, appNavigation: AppNavigation, modifier: Modifier = Modifier) {
+fun ComicLane(
+    appNavigation: AppNavigation,
+    pagingComicItems: LazyPagingItems<ComicItem>,
+    modifier: Modifier = Modifier
+) {
     LazyRow(modifier = modifier) {
         itemsIndexed(pagingComicItems) { index, comicItem ->
-            comicItem?.let { ComicLaneItem(comicItem = comicItem, appNavigation = appNavigation) }
+            comicItem?.let {
+                ComicLaneItem(
+                    comicItem = comicItem,
+                    appNavigation = appNavigation
+                )
+            }
         }
     }
 }

@@ -9,10 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Dehaze
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,18 +64,14 @@ fun FolderListScreen(
         },
         modifier = modifier.statusBarsPadding()
     ) { innerPadding ->
-        val contentModifier = Modifier.padding(innerPadding)
-        val folderItems = folderItemsFlow.collectAsLazyPagingItems()
         FolderItemList(
             appNavigation = appNavigation,
-            folderItems = folderItems,
+            folderItems = folderItemsFlow.collectAsLazyPagingItems(),
             onFolderItemSelected = onFolderItemSelected,
-            modifier = contentModifier
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }
-
-
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -90,7 +83,6 @@ fun ComicListScreen(
     modifier: Modifier = Modifier,
 ) {
     val viewState by viewModelState.collectAsStateWithLifecycle()
-
     Scaffold(
         topBar = {
             ComicListTopAppBar(
@@ -103,29 +95,28 @@ fun ComicListScreen(
         },
         modifier = modifier.statusBarsPadding()
     ) { innerPadding ->
-        val contentModifier = Modifier.padding(innerPadding)
-        val comicItems = comicItemsFlow.collectAsLazyPagingItems()
         ComicItemList(
             appNavigation = appNavigation,
-            comicItems = comicItems,
+            comicItems = comicItemsFlow.collectAsLazyPagingItems(),
             onToggleFavorite =onToggleFavorite,
-            modifier = contentModifier
+            modifier = Modifier.padding(innerPadding)
         )
     }
 }
-
 
 @Composable
 fun FolderItemList(
     appNavigation: AppNavigation,
     folderItems: LazyPagingItems<FolderItem>,
     onFolderItemSelected: (folderItem: FolderItem) -> Unit,
-    modifier: Modifier = Modifier ){
+    modifier: Modifier = Modifier
+){
     LazyColumn(
         modifier = modifier
         .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(0.dp),
-        state = rememberLazyListState()){
+        state = rememberLazyListState()
+    ){
         itemsIndexed(folderItems){ _, folderItem ->
             folderItem?.let {
                 FolderItemCard(appNavigation, folderItem, onFolderItemSelected)
@@ -141,12 +132,14 @@ fun ComicItemList(
     appNavigation: AppNavigation,
     comicItems: LazyPagingItems<ComicItem>,
     onToggleFavorite: (comicId: Long) -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
-    LazyColumn( modifier = modifier
-        .padding(horizontal = 16.dp),
+    LazyColumn(
+        modifier = modifier
+            .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(0.dp),
-        state = rememberLazyListState()){
+        state = rememberLazyListState()
+    ){
         itemsIndexed(comicItems){_, comicItem ->
             comicItem?.let {
                 ComicItemCard(appNavigation, comicItem,  {  comicItems.refresh() }, onToggleFavorite)
@@ -155,9 +148,6 @@ fun ComicItemList(
     }
 }
 
-/**
- * TopAppBar for the Library screen
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LibraryTopAppBar(
@@ -200,9 +190,7 @@ private fun ComicListTopAppBar(
     folderName: String
 ) {
     TopAppBar(
-        title = {
-            Text(text = folderName)
-        },
+        title = { Text(text = folderName) },
         navigationIcon = {
             IconButton(onClick = onBack) {
                 Icon(
@@ -217,6 +205,13 @@ private fun ComicListTopAppBar(
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = stringResource(R.string.cd_search)
+                )
+            }
+            MoreActionsButton {
+                DropdownMenuItem(
+                    text = { Text("") },
+                    onClick = { /* Handle! */ },
+                    leadingIcon = { Icon(Icons.Filled.Share, contentDescription = null) }
                 )
             }
         },

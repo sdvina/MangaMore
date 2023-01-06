@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.sdvina.mangamore.R
 import org.sdvina.mangamore.ui.theme.MangaMoreTheme
 
-
 @Composable
 fun BookmarkButton(
     isBookmarked: Boolean,
@@ -45,7 +44,6 @@ fun BookmarkButton(
 
 @Composable
 fun ShareButton(onClick: () -> Unit) {
-
     IconButton(onClick) {
         Icon(
             imageVector = Icons.Filled.Share,
@@ -67,7 +65,6 @@ fun SearchButton(onClick: () -> Unit) {
 
 @Composable
 fun MoreActionsButton(content:  @Composable (ColumnScope.() -> Unit)) {
-
     var expanded by remember { mutableStateOf(false) }
     IconButton(onClick = { expanded = true }) {
         Icon(
@@ -75,7 +72,6 @@ fun MoreActionsButton(content:  @Composable (ColumnScope.() -> Unit)) {
             contentDescription = stringResource(R.string.cd_morevert)
         )
     }
-
     DropdownMenu(
         expanded = expanded,
         onDismissRequest = { expanded = false },
@@ -86,7 +82,7 @@ fun MoreActionsButton(content:  @Composable (ColumnScope.() -> Unit)) {
 @Preview
 @Composable
 fun MoreActionsButtonPreview(){
-    MangaMoreTheme() {
+    MangaMoreTheme {
         MoreActionsButton {
             DropdownMenuItem(
                 text = { Text("Edit") },

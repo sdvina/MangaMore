@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 
-
 @Composable
 fun VerticalGrid(
     modifier: Modifier = Modifier,

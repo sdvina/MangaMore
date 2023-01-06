@@ -15,8 +15,9 @@ import org.sdvina.mangamore.data.model.ComicItemDetail
 import org.sdvina.mangamore.data.model.ComicPageItem
 import org.sdvina.mangamore.repository.ComicRepository
 
-class ComicViewModel(private val comicRepository: ComicRepository): ViewModel(){
-
+class ComicViewModel(
+    private val comicRepository: ComicRepository
+): ViewModel(){
     private val pagingConfig = PagingConfig(pageSize = 5)
     private var comicItemDetail: ComicItemDetail? = null
 

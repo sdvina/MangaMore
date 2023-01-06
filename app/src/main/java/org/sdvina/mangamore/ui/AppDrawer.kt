@@ -69,7 +69,6 @@ fun AppDrawer(
             },
             modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
         )
-
     }
 }
 
